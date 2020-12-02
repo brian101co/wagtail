@@ -9,6 +9,9 @@ from django.template.loader import render_to_string
 from django.utils.html import format_html_join
 from django.utils.translation import gettext as _
 
+from wagtail.admin.staticfiles import versioned_static
+from wagtail.core.telepath import Adapter, register
+
 from .base import Block, BoundBlock, DeclarativeSubBlocksMetaclass
 
 
@@ -302,6 +305,7 @@ class BaseStreamBlock(Block):
         icon = "placeholder"
         default = []
         required = True
+        form_classname = None
         min_num = None
         max_num = None
         block_counts = {}
@@ -454,3 +458,25 @@ class StreamValue(Sequence):
 
     def __str__(self):
         return self.__html__()
+
+
+class StreamBlockAdapter(Adapter):
+    js_constructor = 'wagtail.blocks.StreamBlock'
+
+    def js_args(self, block, context):
+        return [
+            block.name,
+            [context.pack(child) for child in block.child_blocks.values()],
+            {
+                'label': block.label, 'required': block.required, 'icon': block.meta.icon,
+                'classname': block.meta.form_classname, 'helpText': getattr(block.meta, 'help_text', None),
+                'maxNum': block.meta.max_num, 'minNum': block.meta.min_num,
+                'blockCounts': block.meta.block_counts,
+            },
+        ]
+
+    class Media:
+        js = [versioned_static('wagtailadmin/js/telepath/blocks.js')]
+
+
+register(StreamBlockAdapter(), StreamBlock)
