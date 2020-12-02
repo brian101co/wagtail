@@ -37,8 +37,6 @@ class FieldBlock {
                         <div data-streamfield-widget></div>
                         <span></span>
                     </div>
-                    <p class="help"></p>
-                    <p class="error-message"></p>
                 </div>
             </div>
         `);
@@ -72,11 +70,6 @@ class StructBlock {
     render(placeholder, prefix) {
         var html = $(`
             <div class="${this.meta.classname || ''}">
-                <span>
-                    <div class="help">
-                        <span class="icon-help-inverse" aria-hidden="true"></span>
-                    </div>
-                </span>
             </div>
         `);
         var dom = $(html);
@@ -133,12 +126,6 @@ class ListBlock {
 
     render(placeholder, prefix) {
         var html = $(`
-            <span>
-                <div class="help">
-                    <span class="icon-help default" aria-hidden="true"></span>
-
-                </div>
-            </span>
             <div class="c-sf-container ${this.meta.classname || ''}">
                 <input type="hidden" name="${prefix}-count" data-streamfield-list-count value="0">
 
